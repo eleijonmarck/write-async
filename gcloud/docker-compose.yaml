@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  gcloud-container:
+    build: .
+    image: gcloud-container
+    user: dev
+    init: true
+    volumes:
+      - ~/.config:/home/dev/.config:cached # Mount your local gcloud config store in the docker container
+      # - ./credentials/.kube:/home/dev/.kube:cached # kubectl and kubeconfig store
+      # - ./credentials/ssh:/home/dev/.ssh # Persist gcloud ssh keys
+    working_dir: /home/dev
+    networks:
+      - net

@@ -1,0 +1,17 @@
+module write-async
+
+go 1.15
+
+require (
+	cloud.google.com/go v0.81.0 // indirect
+	cloud.google.com/go/pubsub v1.10.1
+	github.com/go-playground/assert/v2 v2.0.1
+	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/gorilla/mux v1.8.0
+	golang.org/x/mod v0.4.2 // indirect
+	golang.org/x/net v0.0.0-20210331212208-0fccb6fa2b5c // indirect
+	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602 // indirect
+	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 // indirect
+	golang.org/x/text v0.3.6 // indirect
+)

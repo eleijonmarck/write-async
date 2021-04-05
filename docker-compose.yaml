@@ -1,0 +1,55 @@
+version: '3.9'
+
+volumes:
+  pg_data:
+
+services:
+  write-asyncer:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+      args:
+        SETUP_MODE: normal
+
+        # On Linux, this will prevent new files getting created as root, but you
+        # may need to update the USER_UID and USER_GID in `Dockerfile` to match
+        # your user if not 1000.
+        user: "${UID}:${GID}"
+    env_file:
+        - ./writer-asyncer.env
+    networks:
+      - net
+    ports:
+      - 8000:8000
+    depends_on:
+      - pubsub
+  # gcloud-config:
+  #   image: google/cloud-sdk
+  #   command: "gcloud init"
+  pubsub:
+    extends:
+      file: ./gcloud/docker-compose.yaml
+      service: gcloud-container
+    restart: always
+    ports:
+      - "8085:8085"
+    command: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085
+  # postgres:
+  #   image: postgres:12.0-alpine
+  #   networks:
+  #     - net
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - pg_data:/var/lib/postgresql/data/pg_data
+  #   environment:
+  #     POSTGRES_PASSWORD: example
+  #     POSTGRES_DB: example
+  #     POSTGRES_USER: example
+  #     POSTGRES_HOST: pg.example_net
+  #     POSTGRES_PORT: 5432
+  #     PGDATA: /var/lib/postgresql/data/pg_data
+
+networks:
+  net:
+

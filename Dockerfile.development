@@ -1,0 +1,10 @@
+FROM golang:1.16-alpine
+
+WORKDIR /app
+COPY . .
+
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix nocgo -o write-asyncer cmd/writer-asyncer/writer-asyncer.go
+
+# hot reloading for development
+RUN go get github.com/githubnemo/CompileDaemon
+ENTRYPOINT ["/bin/ash", "-c", "CompileDaemon --build=\"go build cmd/writer-asyncer/writer-asyncer.go\" --command=./writer-asyncer"]

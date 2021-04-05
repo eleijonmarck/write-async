@@ -38,3 +38,25 @@ flow:
 2. queue |> worker.pulls(job, type) | process | output |> update(user.task.completed)
 
 ### queue
+
+## setup - gcloud pubsub
+
+sets up the local use of cloud-sdk with your user on the gcloud project
+
+```
+docker run -ti --name gcloud-config google/cloud-sdk gcloud init
+```
+
+### locally
+
+```bash
+PROJECT_ID:="local"
+TOPIC_ID:="topic_local"
+SUB_ID:="sub_local"
+```
+
+```
+gcloud beta emulators pubsub start --project=${PROJECT_ID}
+./gcloud/python-pubsub/python publisher.py ${PROJECT_ID} create ${TOPIC_ID}
+./gcloud/python-pubsub/python subscriber.py ${PROJECT_ID} create topic ${SUB_ID}
+```
