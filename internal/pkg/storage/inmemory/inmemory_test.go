@@ -11,7 +11,7 @@ import (
 	"cloud.google.com/go/pubsub"
 )
 
-func TestAddJob(t *testing.T) {
+func setupPubSubClient(t *testing.T) (c pubsub.Client) {
 	os.Setenv("PUBSUB_EMULATOR_HOST", "localhost:8085")
 
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
@@ -55,6 +55,13 @@ func TestAddJob(t *testing.T) {
 			log.Fatal(err)
 		}
 	}
+	return *client
+}
+
+func TestAddJob(t *testing.T) {
+	client := setupPubSubClient(t)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	sub := client.Subscription(mustGetenv("PUBSUB_SUB"))
 
 	cases := []struct {
 		name     string
@@ -69,11 +76,14 @@ func TestAddJob(t *testing.T) {
 		t.Run(c.name, func(t *testing.T) {
 			t.Logf("running test %s", c.name)
 			// Consume 10 messages.
-			err = sub.Receive(ctx, func(ctx context.Context, msg *pubsub.Message) {
+			err := sub.Receive(ctx, func(ctx context.Context, msg *pubsub.Message) {
 				var jsonMessage map[string]interface{}
 				json.Unmarshal(msg.Data, &jsonMessage)
 				log.Printf("received %v", jsonMessage)
 			})
+			if err != nil {
+				t.Errorf("recieved error while receiving from subscription with error %s", err)
+			}
 		})
 	}
 }
